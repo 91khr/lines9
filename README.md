@@ -72,7 +72,9 @@ class Config
     # Each item can be a name-pattern pair, or a name to listen to all patterns
     autocmds: list<list<string> | string>
     # Listeners to the events
-    listeners: dict<func>
+    # event name -> priority group -> function list
+    # The functions of higher priority would be executed before those of lower
+    listeners: dict<dict<list<func>>>
 endclass
 
 type Component = string | FuncComponent
@@ -82,7 +84,7 @@ class FuncComponent
     # Names of autocmds the component listens to
     autocmds: list<list<string> | string>
     # The listeners in the component
-    listeners: dict<func>
+    listeners: dict<dict<list<func>>>
 endclass
 ```
 

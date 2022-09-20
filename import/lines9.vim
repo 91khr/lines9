@@ -18,8 +18,10 @@ export def Toggle()
 enddef
 
 export def EmitEvent(name: string, ...args: list<any>)
-    for fn in conf.listeners->get(name, [])
-        call(fn, args)
+    for fnlist in conf.listeners->get(name, [])
+        for fn in fnlist
+            call(fn, args)
+        endfor
     endfor
 enddef
 
@@ -36,6 +38,31 @@ export def Init(config: any)
         autocmds: [],
         listeners: {},
     }, "keep")
+
+    # Fetch values of components
+    for comp in conf.components->values()
+        if type(comp) == v:t_string
+            continue
+        endif
+        conf.autocmds->extend(comp->get("autocmds", []))
+        for [name, priolist] in comp->get("listeners", {})->items()
+            if !conf.listeners->has_key(name)
+                conf.listeners[name] = {}
+            endif
+            final listeners = conf.listeners[name]
+            for [prio, fnlist] in listeners->items()
+                if !listeners->has_key(prio)
+                    listeners[prio] = []
+                endif
+                listeners[prio]->extend(fnlist)
+            endfor
+        endfor
+    endfor
+
+    # Refactor listeners
+    conf.listeners = conf.listeners->mapnew((_, fns) =>
+                \ fns->items()->sort((a, b) => a[0] == b[0] ? 0 : a[0] < b[0] ? 1 : -1)
+                \    ->mapnew((_, pair) => pair[1]))
 enddef
 # }}} End init
 
@@ -45,34 +72,17 @@ export def Enable()
 
     # Listen to the autocmds
     var autocmds = {}
-    def AddCmd(cmd: any)
-        var name: string
-        var pattern: string
-        if type(cmd) == v:t_list
-            [name, pattern] = cmd
-        else
-            [name, pattern] = [cmd, "*"]
-        endif
-        if autocmds->has_key(name)
-            autocmds[name] ..= "," .. pattern
-        else
-            autocmds[name] = pattern
-        endif
-    enddef
     for cmd in conf.autocmds
-        AddCmd(cmd)
-    endfor
-    for comp in conf.components->values()
-        if type(comp) == v:t_dict
-            for cmd in comp->get("autocmds", [])
-                AddCmd(cmd)
-            endfor
+        var [name, pattern] = type(cmd) == v:t_list ? cmd : [cmd, "*"]
+        if !autocmds->has_key(name)
+            autocmds[name] = {}
         endif
+        autocmds[name][pattern] = 1
     endfor
     augroup Lines9
         au!
-        for [name, pattern] in autocmds->items()
-            exec "au " .. name .. " " .. pattern ..
+        for [name, patterns] in autocmds->items()
+            exec "au " .. name .. " " .. patterns->keys()->join(",") ..
                         \ " EmitEvent('autocmd:" .. name .. "', '" .. name .. "', expand('<amatch>'))"
         endfor
         au WinNew * w:lines9_scheme_cache = {}
@@ -168,22 +178,22 @@ export def Update(loc: any, scheme: any = null)
         if scheme == null
             setwinvar(win, "lines9_scheme_cache", {})
         else
-            win->getwinvar("lines9_scheme_cache")[scheme] = null
+            final cache = win->getwinvar("lines9_scheme_cache")
+            cache[scheme] = null
         endif
     endif
     Regenerate(loc)
 enddef
 
-# {{{ CalcScheme
+# {{{ CalcScheme and CalcComponent
+export def CalcComponent(component: any, win: number): string
+    return type(component) == v:t_string ? component : call(component.value, [win])
+enddef
+
 export def CalcScheme(schname: string, win: number): string
     var res = ""
     for name in conf.schemes[schname]
-        const component = conf.components[name]
-        if type(component) == v:t_string
-            res ..= component
-        else
-            res ..= call(component.value, [win])
-        endif
+        res ..= CalcComponent(conf.components[name], win)
     endfor
     return res
 enddef

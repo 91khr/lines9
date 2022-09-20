@@ -76,7 +76,7 @@ export def Enable()
                         \ " EmitEvent('autocmd:" .. name .. "', '" .. name .. "', expand('<amatch>'))"
         endfor
         au WinNew * w:lines9_scheme_cache = {}
-        au BufEnter,WinEnter,WinLeave * Refresh({ scope: "window" })
+        au BufEnter,WinEnter * Refresh({ scope: "window" })
         au TabEnter * Refresh({ scope: "tabpage" })
     augroup END
 

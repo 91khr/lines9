@@ -50,6 +50,11 @@ so modifications to the returned configurations would only affect the modified c
 For more complicated configurations, see files under the `examples` directory;
 they can be previewed with `vim --clean -S examples/example.vim`.
 
+---
+
+The core library of Lines9 only provides most foundamental features, for more utilities that make life easier,
+import submodules `lines9/xxx.vim`, where `xxx` is the module name. Their documents are in `doc/xxx.md`.
+
 ## Configuration
 
 The type of the configuration can be expressed as:
@@ -114,9 +119,7 @@ Enabling would refresh in global scope; disabling would iterate all windows to u
 Refresh statuslines in the scope, regenerating lines if possible. Possible scopes are:
 
 - `{ scope: "tabline" }`: Refresh the tabline;
-- `{ scope: "global" }`;
 - `{ scope: "tabpage", id: number }`: Refresh the tabpage of the ID; if id not given, refresh current tabpage;
-- `{ scope: "buffer", id: number }`: Refresh the buffer of the ID; if id not given, refresh current buffer;
 - `{ scope: "window", id: number }`: Refresh the window of the ID; if id not given, refresh current window.
 
 ### `lines9.Update(loc, scheme: string | null)`

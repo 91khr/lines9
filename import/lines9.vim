@@ -1,6 +1,8 @@
 vim9script
 # vim: fdm=marker
 
+import "./lines9/utils.vim"
+
 # The cached configuration
 var conf: any = null
 # Whether lines9 is enabled
@@ -41,22 +43,9 @@ export def Init(config: any)
 
     # Fetch values of components
     for comp in conf.components->values()
-        if type(comp) == v:t_string
-            continue
+        if type(comp) != v:t_string
+            utils.Merge(conf, comp)
         endif
-        conf.autocmds->extend(comp->get("autocmds", []))
-        for [name, priolist] in comp->get("listeners", {})->items()
-            if !conf.listeners->has_key(name)
-                conf.listeners[name] = {}
-            endif
-            final listeners = conf.listeners[name]
-            for [prio, fnlist] in listeners->items()
-                if !listeners->has_key(prio)
-                    listeners[prio] = []
-                endif
-                listeners[prio]->extend(fnlist)
-            endfor
-        endfor
     endfor
 
     # Refactor listeners

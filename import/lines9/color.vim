@@ -23,7 +23,7 @@ enddef
 export def HlSchemeComponent(scheme: list<any>, src: any = {}): any
     def AddGroups()
         for it in scheme
-            var val = it
+            var val = copy(it)
             if val->has_key("base")
                 val->extend(hlget(val.base, true)[0], "keep")
             endif

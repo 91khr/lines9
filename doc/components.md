@@ -23,6 +23,8 @@ class ModeIndicatorConfig
     # Possible keys are normal, insert and visual
     # If is a string, use it as the name of the highlight group.
     var highlight: dict<HlProp | string> = (omitted)
+    # first char of mode() -> [highlight group, statusline text]
+    var modemap: dict<list<string>>
 endclass
 ```
 

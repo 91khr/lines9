@@ -131,9 +131,9 @@ Update the scheme of the line at the location.
 `loc` follows the same format as the argument of `Config.dispatch`.
 `scheme` can be omitted to update all schemes.
 
-### `lines9.DefaultConf(): Config`
+### `lines9.GetPreset(name: string): Config`
 
-Obtain the default configuration.
+Get the config in the example `examples/name.vim`.
 
 ### `lines9.EmitEvent(name: string, ...args: list<any>)`
 

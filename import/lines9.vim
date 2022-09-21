@@ -9,6 +9,7 @@ var conf: any = null
 var enabled: bool = false
 # The saved tabline
 var saved_tabline: string = ""
+var saved_qf_statusline: number = 0
 
 # {{{ Toggle, EmitEvent, DefaultConf
 export def Toggle()
@@ -107,7 +108,6 @@ export def Enable()
             exec "au " .. name .. " " .. patterns->keys()->join(",") ..
                         \ " EmitEvent('autocmd:" .. name .. "', '" .. name .. "', expand('<amatch>'))"
         endfor
-        au WinNew * w:lines9_scheme_cache = {}
         au BufEnter,WinEnter * Refresh({ scope: "window" })
         au TabEnter * Refresh({ scope: "tabpage" })
     augroup END
@@ -117,6 +117,8 @@ export def Enable()
 
     # Save global values
     saved_tabline = &tabline
+    saved_qf_statusline = get(g:, "qf_disable_statusline", 0)
+    g:qf_disable_statusline = 1
     for tab in range(1, tabpagenr("$"))
         for win in range(1, tabpagewinnr(tab, "$"))
             settabwinvar(tab, win, "lines9_scheme_cache", {})
@@ -142,6 +144,7 @@ export def Disable()
 
     # Restore the lines
     &tabline = saved_tabline
+    g:qf_disable_statusline = saved_qf_statusline
     # Unset the local lines
     for tab in range(1, tabpagenr("$"))
         for win in range(1, tabpagewinnr(tab, "$"))
@@ -177,7 +180,7 @@ def Regenerate(loc: any)
         return
     endif
     const win = loc.type == "tabline" ? -1 : loc.winid
-    const schemes = loc.type == "tabline" ? g:lines9_scheme_cache : win->getwinvar("lines9_scheme_cache")
+    final schemes = loc.type == "tabline" ? g:lines9_scheme_cache : win->getwinvar("lines9_scheme_cache", {})
     const res = schemes->get(schname, null) == null ? CalcScheme(schname, win) : schemes[schname]
     schemes[schname] = res
     if loc.type == "tabline"

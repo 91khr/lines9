@@ -40,7 +40,7 @@ export def ModeIndicator(config: any = {}): any
         '!': ["command", "COMMAND"],
     }
     function Calc(hlgroups, hlmap, fmt)
-        function s:CalcImpl(win) closure
+        function! s:CalcImpl(win) closure
             let mod = mode()[0]
             let [cat, text] = a:hlmap[mod]
             return s:color.Highlight(a:hlgroups[cat]) .. printf(a:fmt, text)

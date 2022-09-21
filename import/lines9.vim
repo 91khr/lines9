@@ -11,7 +11,7 @@ var enabled: bool = false
 var saved_tabline: string = ""
 var saved_qf_statusline: number = 0
 
-# {{{ Toggle, EmitEvent, DefaultConf
+# {{{ Toggle, EmitEvent, GetPreset
 export def Toggle()
     if enabled
         Disable()
@@ -28,41 +28,9 @@ export def EmitEvent(name: string, ...args: list<any>)
     endfor
 enddef
 
-export def DefaultConf(): any
-    var leaving = false
-    def LeavingRefresh(..._)
-        leaving = true
-        Refresh({ scope: "window" })
-    enddef
-    return {
-        schemes: {
-            active: ["mode", "fname", "sep", "fileinfo", "index"],
-            inactive: ["fname_inactive", "sep", "index_inactive"],
-        },
-        components: {
-            mode: components.ModeIndicator(),
-            fname: color.HlComponent(" %F ", "StatusLineNC"),
-            fname_inactive: color.HlComponent(" %F ", "CursorLine"),
-            sep: color.HlComponent(components.Sep, "CursorLine"),
-            fileinfo: " %{&ff} | %{&enc} | %{&ft ?? '(no ft)'} ",
-            index: color.HlComponent(" %l:%c ", "StatusLine"),
-            index_inactive: color.HlComponent(" %l:%c ", "StatusLineNC"),
-        },
-        dispatch: (loc): any => {
-            if loc.type == "tabline"
-                return null
-            elseif leaving || win_getid() != loc.winid
-                leaving = false
-                return "inactive"
-            else
-                return "active"
-            endif
-        },
-        autocmds: [ "WinLeave" ],
-        listeners: {
-            "autocmd:WinLeave": { 0: [LeavingRefresh] },
-        },
-    }
+export def GetPreset(name: string): any
+    exec "source " .. expand("<script>:h") .. "/../examples/" .. name .. ".vim"
+    return g:lines9_config
 enddef
 # }}} End assets
 

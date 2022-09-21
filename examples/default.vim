@@ -12,7 +12,7 @@ def LeavingRefresh(..._)
     lines9.Refresh({ scope: "window" })
 enddef
 
-var conf = {
+g:lines9_config = {
     schemes: {
         active: ["mode", "fname", "sep", "fileinfo", "index"],
         inactive: ["fname_inactive", "sep", "index_inactive"],
@@ -41,7 +41,4 @@ var conf = {
         "autocmd:WinLeave": { 0: [LeavingRefresh] },
     },
 }
-
-lines9.Init(conf)
-lines9.Enable()
 

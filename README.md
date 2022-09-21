@@ -48,7 +48,8 @@ so modifications to the returned configurations would only affect the modified c
 **Note**: `Init` would take ownership of the configuration, don't use the configuration after initialization.
 
 For more complicated configurations, see files under the `examples` directory;
-they can be previewed with `vim --clean -S examples/example.vim`.
+they can be previewed by changing directory to `examples` directory and execute `vim -S view.vim example.vim`,
+where `example` is the name of the example.
 
 ---
 

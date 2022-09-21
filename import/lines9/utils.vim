@@ -1,12 +1,15 @@
 vim9script
 # Other small utils
 
-export def Dyn(Fn: func(number): string): func(number): string
-    return (win) => "%{" .. string(Fn) .. "(" .. win .. ")}"
+export def Dyn(Fn: func, rec: bool = false): func(number): string
+    return (win) => "%{" .. (rec ? "%" : "") .. string(Fn) .. "(" .. win .. ")" .. (rec ? "%" : "") .. "}"
 enddef
 
 export def Merge(src: any, dst: any): any
-    src.autocmds->extend(dst->get("autocmds", []))
+    src.autocmds = src->get("autocmds", [])->extend(dst->get("autocmds", []))
+    if !src->has_key("listeners")
+        src.listeners = {}
+    endif
     for [name, priolist] in dst->get("listeners", {})->items()
         if !src.listeners->has_key(name)
             src.listeners[name] = {}

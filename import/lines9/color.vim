@@ -40,7 +40,9 @@ export def HlSchemeComponent(scheme: list<any>, src: any = {}): any
         endfor
     enddef
     return utils.Merge(src, {
+        autocmds: ["ColorScheme"],
         listeners: {
+            "autocmd:ColorScheme": { 1: [(..._) => AddGroups()] },
             "lines9:BeforeEnable": { 1: [AddGroups] },
             "lines9:BeforeDisable": { 1: [DelGroups] },
         }

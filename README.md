@@ -154,4 +154,5 @@ and only *updating* the statusline would forcefully regenerate the scheme.
 ## Todo
 
 - [ ] Use actual types for the components instead of `any`.
+- [ ] Use Vim9 closures for dynamic statusline when it's possible.
 

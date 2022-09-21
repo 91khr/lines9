@@ -62,29 +62,29 @@ The type of the configuration can be expressed as:
 ``` vim
 class Config
     # name -> component value
-    components: dict<Component>
+    var components: dict<Component>
     # scheme name -> list of components by names
-    schemes: dict<list<string>>
+    var schemes: dict<list<string>>
     # Decide which scheme should be used on the statusline/tabline.
     # Return null to use the global statusline.
-    dispatch: func(tuple<type: "statusline", winid: number> | tuple<type: "tabline">): string | null
+    var dispatch: func(tuple<type: "statusline", winid: number> | tuple<type: "tabline">): string | null
     # Autocmds that should be listened to.
     # Each item can be a name-pattern pair, or a name to listen to all patterns
-    autocmds: list<list<string> | string>
+    var autocmds: list<list<string> | string>
     # Listeners to the events
     # event name -> priority group -> function list
     # The functions of higher priority would be executed before those of lower
-    listeners: dict<dict<list<func>>>
+    var listeners: dict<dict<list<func>>>
 endclass
 
 type Component = string | FuncComponent
 class FuncComponent
     # The function, the window id would be passed to the function, -1 for tabline.
-    value: func(number): string
+    var value: func(number): string
     # Names of autocmds the component listens to
-    autocmds: list<list<string> | string>
+    var autocmds: list<list<string> | string>
     # The listeners in the component
-    listeners: dict<dict<list<func>>>
+    var listeners: dict<dict<list<func>>>
 endclass
 ```
 

@@ -18,6 +18,7 @@ Return a component with listeners to add highlight groups.
 
 `HlProp` is of the same structure as those returned by `hlget()`,
 with an extra key `base` indicating from which group it's derived.
+And the names must be specified.
 
 The component should not be used in lines directly since its content is empty.
 On the other hand, you may derive your custom highlighted components based on the component.

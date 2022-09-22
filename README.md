@@ -173,6 +173,16 @@ Thus contents of statuslines are cached per window by schemes,
 *refreshing* the statusline would reset the statusline option with the cached value,
 and only *updating* the statusline would forcefully regenerate the scheme.
 
+The tabline is similar to statuslines, and uses similar strategy.
+
+By default, following autocmds would trigger refreshing:
+
+- `BufEnter` and `WinEnter`: refresh current window;
+- `TabEnter`: refresh current tabpage and the tabline.
+
+**Note** that the refreshments are hard-coded, happens *after* events are processed,
+and are not a part of the event system.
+
 ## Todo
 
 - [ ] Use actual types for the components instead of `any`.

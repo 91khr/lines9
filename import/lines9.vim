@@ -10,6 +10,9 @@ var enabled: bool = false
 # The saved tabline
 var saved_tabline: string = ""
 var saved_qf_statusline: number = 0
+# The tabline value
+var tabline_val = ""
+var tabline_scheme_cache = {}
 
 # {{{ Toggle, EmitEvent, GetPreset
 export def Toggle()
@@ -81,10 +84,11 @@ export def Enable()
     augroup END
 
     # Create cache
-    g:lines9_scheme_cache = {}
+    tabline_scheme_cache = {}
 
     # Save global values
     saved_tabline = &tabline
+    &tabline = "%!" .. string(() => tabline_val) .. "()"
     saved_qf_statusline = get(g:, "qf_disable_statusline", 0)
     g:qf_disable_statusline = 1
     for tab in range(1, tabpagenr("$"))
@@ -148,11 +152,11 @@ def Regenerate(loc: any)
         return
     endif
     const win = loc.type == "tabline" ? -1 : loc.winid
-    final schemes = loc.type == "tabline" ? g:lines9_scheme_cache : win->getwinvar("lines9_scheme_cache", {})
+    final schemes = loc.type == "tabline" ? tabline_scheme_cache : win->getwinvar("lines9_scheme_cache", {})
     const res = schemes->get(schname, null) == null ? CalcScheme(schname, win) : schemes[schname]
     schemes[schname] = res
     if loc.type == "tabline"
-        &tabline = res
+        tabline_val = res
     else
         setwinvar(win, "&statusline", res)
     endif
@@ -163,9 +167,9 @@ enddef
 export def Update(loc: any, scheme: any = null)
     if loc.type == "tabline"
         if scheme == null
-            g:lines9_scheme_cache = {}
+            tabline_scheme_cache = {}
         else
-            g:lines9_scheme_cache[scheme] = null
+            tabline_scheme_cache[scheme] = null
         endif
     else
         const win = loc->get("winid", win_getid())

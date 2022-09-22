@@ -12,15 +12,20 @@ def LeavingRefresh(..._)
     lines9.Refresh({ scope: "window" })
 enddef
 
+final fname = components.FileName()
+const FnameFn = fname.value
+fname.value = (win) => (getbufvar(winbufnr(win), "&ro") ? " RO |" : "") .. FnameFn(win)
+
 g:lines9_config = {
     schemes: {
-        active: ["mode", "fname", "sep", "fileinfo", "percentage", "index"],
-        inactive: ["fname_inactive", "sep", "index_inactive"],
+        active: ["mode", "fname", "modified", "sep", "fileinfo", "percentage", "index"],
+        inactive: ["fname_inactive", "modified", "sep", "index_inactive"],
         tabline: ["tablist", "sep", "closecur"],
     },
     components: {
         mode: components.ModeIndicator(),
-        fname: color.HlComponent(components.FileName(), "StatusLineNC"),
+        fname: color.HlComponent(fname, "StatusLineNC"),
+        modified: utils.MakeComponent("%{&modified ? '| + ' : ''}"),
         fname_inactive: color.HlComponent(components.FileName(), "CursorLine"),
         sep: color.HlComponent(components.Sep, "CursorLine"),
         fileinfo: utils.MakeComponent(" %{&ff} | %{&enc} | %{&ft ?? '(no ft)'} "),

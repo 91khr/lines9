@@ -37,7 +37,7 @@ lines9.Toggle()
 # To derive a configuration from the default configuration
 var lines9_conf = lines9.GetPreset("default")
 # Add a component to the statusline
-lines9_conf.status.active->add("filename")
+lines9_conf.schemes["bufnr"] = { value: (win) => winbufnr(win) }
 # Re-init with the configuration
 lines9.Init(lines9_conf)
 ```

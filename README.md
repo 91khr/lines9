@@ -138,6 +138,10 @@ Get the config in the example `examples/name.vim`.
 
 Emit an event, invoking all its listeners.
 
+### `lines9.CalcScheme(name: string, win: number): string`
+
+Calculate the scheme for the window of given ID, returning its statusline value.
+
 ## Architecture and details
 
 Different windows or different states of the same window may use different types of statuslines.

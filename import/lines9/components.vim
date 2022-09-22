@@ -4,8 +4,8 @@ vim9script
 import "./utils.vim"
 import "./color.vim"
 
-export const Trunc = "%<"
-export const Sep = "%="
+export const Trunc = utils.MakeComponent("%<")
+export const Sep = utils.MakeComponent("%=")
 
 export def ModeIndicator(config: any = {}): any
     const conf = config->extend({

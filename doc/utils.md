@@ -16,6 +16,10 @@ the number passed to the wrapper when refreshing the line.
 `rec` specifies whether the result of the result of the function should be
 expanded recursively, i.e. use `%{%...%}` instead of `%{...}`
 
+## `MakeComponent(val: string | func(number): string): Component`
+
+Turn the string or function into a component.
+
 ## `Merge(src: Component, dst: Component): Component`
 
 Merge the data: autocmds and listeners in `dst` into `src`.

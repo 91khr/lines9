@@ -1,6 +1,17 @@
 vim9script
 # Other small utils
 
+export def MakeComponent(val: any): any
+    if type(val) == v:t_string
+        return { value: (win) => val }
+    elseif type(val) == v:t_func
+        return { value: val }
+    else
+        throw "Lines9.utils.MakeComponent: Incorrect component type"
+    endif
+    return {}  # Make type check happy
+enddef
+
 export def Dyn(Fn: func, rec: bool = false): func(number): string
     return (win) => "%{" .. (rec ? "%" : "") .. string(Fn) .. "(" .. win .. ")" .. (rec ? "%" : "") .. "}"
 enddef

@@ -180,15 +180,11 @@ export def Update(loc: any, scheme: any = null)
 enddef
 # }}} End update
 
-# {{{ CalcScheme and CalcComponent
-export def CalcComponent(component: any, win: number): string
-    return type(component) == v:t_string ? component : call(component.value, [win])
-enddef
-
+# {{{ CalcScheme
 export def CalcScheme(schname: string, win: number): string
     var res = ""
     for name in conf.schemes[schname]
-        res ..= CalcComponent(conf.components[name], win)
+        res ..= call(conf.components[name].value, [win])
     endfor
     return res
 enddef

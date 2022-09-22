@@ -75,6 +75,7 @@ class Config
     # Listeners to the events
     # event name -> priority group -> function list
     # The functions of higher priority would be executed before those of lower
+    # For details, see document below.
     var listeners: dict<dict<list<func>>>
 endclass
 
@@ -83,12 +84,14 @@ class Component
     var value: func(number): string
     # Names of autocmds the component listens to
     var autocmds: list<list<string> | string>
-    # The listeners in the component
+    # The listeners in the component, akin to that in Config
     var listeners: dict<dict<list<func>>>
 endclass
 ```
 
 The name returned by `dispatch` should be a valid scheme name.
+
+### Events
 
 Some events are defined by default:
 
@@ -103,6 +106,22 @@ The autocmd event name and the matched pattern would be passed to the listener.
 
 Events may be directly invoked with their name and arbitrary arguments.
 However, arguments passed to the event should agree with the event's requirements.
+
+### Listeners
+
+Basically, listener list should look like this:
+
+``` vim
+conf.listeners = {
+    "autocmd:BufEnter": { 1: [BufEnterHandler1, BufEnterHandler2], },
+    "autocmd:BufLeave": { 1: [BufLeaveHandler1, BufLeaveHandler2], 2: [BufLeaveHandler3], },
+}
+```
+
+In this example, `BufLeaveHandler3` is invoked before `BufLeaveHandler1`, `BufLeaveHandler2`,
+and other listeners to event `autocmd:BufLeave`,
+while unspecified and maybe varying is the invocation order of
+`BufLeaveHandler1`, `BufLeaveHandler2`, and other `autocmd:BufLeave` listeners.
 
 ## Functions
 

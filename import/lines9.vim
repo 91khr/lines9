@@ -176,7 +176,6 @@ export def Update(loc: any, scheme: any = null)
             cache[scheme] = null
         endif
     endif
-    Regenerate(loc)
 enddef
 # }}} End update
 

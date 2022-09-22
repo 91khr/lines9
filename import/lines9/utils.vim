@@ -36,6 +36,12 @@ export def Merge(src: any, dst: any): any
     return src
 enddef
 
+export def Pipe(component: any, Fn: func(string): string): any
+    const Old = component.value
+    component.value = (win) => Fn(Old(win))
+    return component
+enddef
+
 export def WithSep(sep: string, ...components: list<any>): any
     const fnlist = components->mapnew((_, comp) => comp.value)
     final res = { value: (win) => fnlist->mapnew((_, F) => F(win))->join(sep) }

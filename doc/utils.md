@@ -26,6 +26,12 @@ Merge the data: autocmds and listeners in `dst` into `src`.
 Modifies `src` in place, returning `src`.
 `dst` is remained unchanged.
 
+## `Pipe(component: Component, proc: func(string): string): Component`
+
+Pipe the output of `component`'s function into `proc`,
+returning the modified component.
+Take ownership of `component`.
+
 ## `WithSep(sep: string, ...components: list<Component>): Component`
 
 Returns a component that joins the components, separated with `sep`.

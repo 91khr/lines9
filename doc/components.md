@@ -62,9 +62,15 @@ class TabpageListConfig
     # If is a string, use it as the name of the highlight group.
     var highlight: dict<HlProp | string> = (omitted)
     # Separator between different inactive tabs
-    var sep: string = "|"
+    var sep_inactive: string = "|"
     # Separator between active and inactive tabs
     var sep_active: string = ""
+    # Component function for inactive tabs
+    # tabnr -> string
+    var tab_inactive: func(number): string = (omitted)
+    # Component function for active tabs
+    # tabnr -> string
+    var tab_active: func(number): string = (omitted)
 endclass
 ```
 

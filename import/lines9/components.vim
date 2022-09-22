@@ -101,20 +101,27 @@ export def FileName(config: any = {}): any
 enddef
 
 export def TabpageList(config: any = {}): any
-    const DefaultFname = FileNameFunc({ full: false })
-    const conf = config->extend({
-        onetab: (tabnr) => {
-            const win = win_getid(tabpagewinnr(tabnr), tabnr)
-            const buf = winbufnr(win)
-            var mo_ro = ""
+    function FnameFunc(Fname)
+        function! s:TabpageFuncImpl(tabnr, win) closure
+            let buf = winbufnr(a:win)
+            let mo_ro = ""
             if getbufinfo(buf)[0].changed
-                mo_ro = " +"
+                let mo_ro = " +"
             elseif getbufvar(buf, "&ro")
-                mo_ro = " -"
+                let mo_ro = " -"
             endif
-            return " " .. string(tabnr) .. " " .. DefaultFname(win) .. mo_ro .. " "
+            return string(a:tabnr) .. " " .. a:Fname(a:win) .. mo_ro .. " "
+        endfunction
+        return function("s:TabpageFuncImpl")
+    endfunction
+    const DefaultFname = FnameFunc(FileNameFunc({ full: false }))
+    const conf = config->extend({
+        tab_inactive: (tabnr) => {
+            const win = win_getid(tabpagewinnr(tabnr), tabnr)
+            return " " .. DefaultFname(tabnr, win)
         },
-        sep: "|",
+        tab_active: (tabnr) => " %{" .. string(DefaultFname) .. "(" .. tabnr .. ", win_getid())}",
+        sep_inactive: "|",
         sep_active: "",
         highlight: {
             active: "StatusLine",
@@ -127,15 +134,15 @@ export def TabpageList(config: any = {}): any
         const curtab = tabpagenr()
         const alltab = range(1, tabpagenr("$"))
         if curtab > 1
-            res ..= alltab[0 : curtab - 2]->mapnew((_, v) => conf.onetab(v))->join(conf.sep)
+            res ..= alltab[0 : curtab - 2]->mapnew((_, v) => conf.tab_inactive(v))->join(conf.sep_inactive)
             res ..= conf.sep_active
         endif
         res ..= color.Highlight(hlgroups.active)
-        res ..= conf.onetab(curtab)
+        res ..= conf.tab_active(curtab)
         res ..= color.Highlight(hlgroups.inactive)
         if curtab < alltab[-1]
             res ..= conf.sep_active
-            res ..= alltab[curtab : -1]->mapnew((_, v) => conf.onetab(v))->join(conf.sep)
+            res ..= alltab[curtab : -1]->mapnew((_, v) => conf.tab_inactive(v))->join(conf.sep_inactive)
         endif
         return res
     enddef

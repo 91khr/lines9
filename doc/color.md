@@ -1,4 +1,4 @@
-# Module `lines9/color.vim`
+# `lines9/color.vim`
 
 Utilities for applying colorscheme/highlight groups on the components and the statusline.
 

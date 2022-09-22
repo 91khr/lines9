@@ -37,7 +37,7 @@ export def ModeIndicator(config: any = {}): any
             'r': ["command", "COMMAND"],
             '!': ["command", "COMMAND"],
         },
-    })
+    }, "keep")
     const hlgroups = conf.highlight->mapnew((_, v) => type(v) == v:t_string ? v : v.name)
     function CalcMode(conf, hlgroups)
         function! s:CalcModeImpl(win) closure
@@ -49,5 +49,35 @@ export def ModeIndicator(config: any = {}): any
     return color.HlSchemeComponent(conf.highlight->values()->filter((_, v) => type(v) == v:t_dict), {
         value: utils.Dyn(CalcMode(conf, hlgroups), true),
     })
+enddef
+
+export def FileName(config: any = {}): any
+    const conf = config->extend({
+        full: true,
+        format: " %s ",
+    }, "keep")
+    def CalcFileName(win: number): string
+        const buf = winbufnr(win)
+        const fname = bufname(buf)
+        if empty(fname)
+            var bt = getbufvar(buf, '&bt')
+            if bt == 'quickfix'
+                return !!getwininfo(win)[0].loclist ? '[Location List]' : '[Quickfix List]'
+            endif
+            var btlist = {
+                        \     nofile: '[Scratch]',
+                        \     prompt: '[Prompt]',
+                        \     popup: '[Popup]',
+                        \ }
+            return btlist->has_key(bt) ? btlist[bt] : '[No Name]'
+        endif
+        if getbufvar(buf, '&ft') == 'help' && getbufvar(buf, '&ro') && !getbufvar(buf, '&modifiable')
+            return fnamemodify(fname, ":t")
+        endif
+        const relpath = fnamemodify(fname, ":.")
+        return conf.full ? relpath :
+                    \ substitute(relpath, '\v([^/])([^/]*)' .. '/', '\1' .. '/', 'g')
+    enddef
+    return { value: (win) => printf(conf.format, CalcFileName(win)) }
 enddef
 

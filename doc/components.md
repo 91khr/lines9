@@ -2,6 +2,9 @@
 
 Small components.
 
+All components receiving a config would take the config's ownership,
+don't use it after initializing the component.
+
 ## String components
 
 `Trunc`: Indicate where truncation begins, `%<`.
@@ -12,8 +15,7 @@ Small components.
 
 Returns a component indicating current mode.
 
-Would take `conf`'s ownership, don't use it afterwards.
-`conf` has following type:
+`conf` has the following type:
 
 ``` vim
 class ModeIndicatorConfig
@@ -28,3 +30,17 @@ class ModeIndicatorConfig
 endclass
 ```
 
+## `FileName(conf): Component`
+
+Returns a component indicating the file name of current window.
+
+`conf` has the following type:
+
+``` vim
+class FileNameConfig
+    # The format used for the filename string
+    var format: string = " %s "
+    # Whether use the full format
+    var full: bool = true
+endclass
+```

@@ -1,6 +1,7 @@
 vim9script
 # Small components
 
+import "../lines9.vim"
 import "./utils.vim"
 import "./color.vim"
 
@@ -78,6 +79,15 @@ export def FileName(config: any = {}): any
         return conf.full ? relpath :
                     \ substitute(relpath, '\v([^/])([^/]*)' .. '/', '\1' .. '/', 'g')
     enddef
-    return { value: (win) => printf(conf.format, CalcFileName(win)) }
+    return {
+        value: (win) => printf(conf.format, CalcFileName(win)),
+        autocmds: ["BufWinEnter"],
+        listeners: {
+            "autocmd:BufWinEnter": {
+                0: [(..._) => lines9.Refresh({ scope: "window" })],
+                1: [(..._) => lines9.Update({ type: "statusline" })],
+            },
+        },
+    }
 enddef
 

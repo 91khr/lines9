@@ -30,3 +30,7 @@ Modifies `src` in place, returning `src`.
 
 Returns a component that joins the components, separated with `sep`.
 
+## Todo
+
+- [ ] Type `Fn` argument of `Dyn` when vim9 closures can be used in statuslines.
+

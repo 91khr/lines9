@@ -17,14 +17,6 @@ export def Dyn(Fn: func, rec: bool = false): func(number): string
 enddef
 
 export def Merge(src: any, dst: any): any
-    if type(src) == v:t_string
-        const ctnt = src
-        final res = copy(dst)
-        res.value = (win) => ctnt
-        return res
-    elseif type(dst) == v:t_string
-        return src
-    endif
     src.autocmds = src->get("autocmds", [])->extend(dst->get("autocmds", []))
     if !src->has_key("listeners")
         src.listeners = {}
@@ -45,7 +37,7 @@ export def Merge(src: any, dst: any): any
 enddef
 
 export def WithSep(sep: string, ...components: list<any>): any
-    const fnlist = components->mapnew((_, comp) => type(comp) == v:t_string ? (win) => comp : comp.value)
+    const fnlist = components->mapnew((_, comp) => comp.value)
     final res = { value: (win) => fnlist->mapnew((_, F) => F(win))->join(sep) }
     for comp in components
         res->Merge(comp)

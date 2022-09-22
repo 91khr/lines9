@@ -9,15 +9,11 @@ enddef
 
 export def HlComponent(component: any, group: string): any
     const hl = Highlight(group)
-    if type(component) == v:t_string
-        return hl .. component
-    else
-        return {
-            value: (win) => hl .. call(component.value, [win]),
-            autocmds: component->get("autocmds", []),
-            listeners: component->get("listeners", {}),
-        }
-    endif
+    return {
+        value: (win) => hl .. call(component.value, [win]),
+        autocmds: component->get("autocmds", []),
+        listeners: component->get("listeners", {}),
+    }
 enddef
 
 export def HlSchemeComponent(scheme: list<any>, src: any = {}): any

@@ -78,8 +78,7 @@ class Config
     var listeners: dict<dict<list<func>>>
 endclass
 
-type Component = string | FuncComponent
-class FuncComponent
+class Component
     # The function, the window id would be passed to the function, -1 for tabline.
     var value: func(number): string
     # Names of autocmds the component listens to
@@ -143,8 +142,7 @@ Emit an event, invoking all its listeners.
 
 Different windows or different states of the same window may use different types of statuslines.
 In Lines9, we use *schemes* to refer to a list of *components* that concatenates to make up a statusline.
-Here, a component should generate a string as a part of the statusline option;
-it can either be a string indicating the raw part of the option or a function returning such a string.
+Here, a component should generate a string as a part of the statusline option.
 
 Generating the statusline may be expensive;
 for example, there may be a component using a complex algorithm to work out its content.

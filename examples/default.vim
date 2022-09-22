@@ -48,6 +48,12 @@ g:lines9_config = {
     autocmds: [ "WinLeave" ],
     listeners: {
         "autocmd:WinLeave": { 0: [LeavingRefresh] },
+        "lines9:GetTabline": {
+            1: [() => {
+                lines9.Update({ type: "tabline" })
+                lines9.Refresh({ scope: "tabline" })
+            }],
+        },
     },
 }
 

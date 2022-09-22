@@ -88,7 +88,6 @@ export def Enable()
 
     # Save global values
     saved_tabline = &tabline
-    &tabline = "%!" .. string(() => tabline_val) .. "()"
     saved_qf_statusline = get(g:, "qf_disable_statusline", 0)
     g:qf_disable_statusline = 1
     for tab in range(1, tabpagenr("$"))
@@ -96,6 +95,12 @@ export def Enable()
             settabwinvar(tab, win, "lines9_scheme_cache", {})
         endfor
     endfor
+
+    def GetTabline(): string
+        EmitEvent("lines9:GetTabline")
+        return tabline_val
+    enddef
+    &tabline = "%!" .. string(GetTabline) .. "()"
 
     Refresh({ scope: "tabpage" })
     Refresh({ scope: "tabline" })

@@ -95,10 +95,11 @@ The name returned by `dispatch` should be a valid scheme name.
 
 Some events are defined by default:
 
-- `lines9:BeforeEnable`: called before enabling, no arguments;
-- `lines9:AfterEnable`: called after enabling, no arguments;
-- `lines9:BeforeDisable`: called before disabling, no arguments;
-- `lines9:AfterDisable`: called after disabling, no arguments.
+- `lines9:BeforeEnable`: triggered before enabling, no arguments;
+- `lines9:AfterEnable`: triggered after enabling, no arguments;
+- `lines9:BeforeDisable`: triggered before disabling, no arguments;
+- `lines9:AfterDisable`: triggered after disabling, no arguments.
+- `lines9:GetTabline`: triggered every time before Vim retrieves the tabline.
 
 Events originating from listening to autocmds are named `autocmd:AutocmdEventName`,
 where `AutocmdEventName` is the event name in the specification.

@@ -11,6 +11,8 @@ don't use it after initializing the component.
 
 `Sep`: Seperator of left and right aligned parts of the statusline, `%=`.
 
+`CloseCurTab`: A button for closing current tabpage, `%999X X `.
+
 ## `ModeIndicator(conf): Component`
 
 Returns a component indicating current mode.
@@ -30,17 +32,39 @@ class ModeIndicatorConfig
 endclass
 ```
 
-## `FileName(conf): Component`
+## `FileName(conf): Component`, `FileNameFunc(conf): func(number): string`
 
-Returns a component indicating the file name of current window.
+`FileName` returns a component indicating the file name of current window.
+`FileNameFunc` returns a function retrieving the file name of the given window.
 
 `conf` has the following type:
 
 ``` vim
 class FileNameConfig
-    # The format used for the filename string
+    # The format used for the filename component content,
+    # not available for FileNameFunc
     var format: string = " %s "
     # Whether use the full format
     var full: bool = true
 endclass
 ```
+
+## `TabpageList(conf): Component`
+
+Returns a component listing current tabpages, used for tablines.
+
+`conf` has the following type:
+
+``` vim
+class TabpageListConfig
+    # Highlight on different modes
+    # Possible keys are normal, insert and visual
+    # If is a string, use it as the name of the highlight group.
+    var highlight: dict<HlProp | string> = (omitted)
+    # Separator between different inactive tabs
+    var sep: string = "|"
+    # Separator between active and inactive tabs
+    var sep_active: string = ""
+endclass
+```
+

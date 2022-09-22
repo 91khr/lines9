@@ -7,6 +7,7 @@ import "./color.vim"
 
 export const Trunc = utils.MakeComponent("%<")
 export const Sep = utils.MakeComponent("%=")
+export const CloseCurTab = utils.MakeComponent("%999X X ")
 
 export def ModeIndicator(config: any = {}): any
     const conf = config->extend({
@@ -52,10 +53,9 @@ export def ModeIndicator(config: any = {}): any
     })
 enddef
 
-export def FileName(config: any = {}): any
+export def FileNameFunc(config: any = {}): func(number): string
     const conf = config->extend({
         full: true,
-        format: " %s ",
     }, "keep")
     def CalcFileName(win: number): string
         const buf = winbufnr(win)
@@ -79,8 +79,17 @@ export def FileName(config: any = {}): any
         return conf.full ? relpath :
                     \ substitute(relpath, '\v([^/])([^/]*)' .. '/', '\1' .. '/', 'g')
     enddef
+    return CalcFileName
+enddef
+
+export def FileName(config: any = {}): any
+    const conf = config->extend({
+        full: true,
+        format: " %s ",
+    }, "keep")
+    const Func = FileNameFunc(conf)
     return {
-        value: (win) => printf(conf.format, CalcFileName(win)),
+        value: (win) => printf(conf.format, Func(win)),
         autocmds: ["BufWinEnter"],
         listeners: {
             "autocmd:BufWinEnter": {
@@ -89,5 +98,67 @@ export def FileName(config: any = {}): any
             },
         },
     }
+enddef
+
+export def TabpageList(config: any = {}): any
+    const DefaultFname = FileNameFunc({ full: false })
+    const conf = config->extend({
+        onetab: (tabnr) => {
+            const win = win_getid(tabpagewinnr(tabnr), tabnr)
+            const buf = winbufnr(win)
+            var mo_ro = ""
+            if getbufinfo(buf)[0].changed
+                mo_ro = " +"
+            elseif getbufvar(buf, "&ro")
+                mo_ro = " -"
+            endif
+            return " " .. string(tabnr) .. " " .. DefaultFname(win) .. mo_ro .. " "
+        },
+        sep: "|",
+        sep_active: "",
+        highlight: {
+            active: "StatusLine",
+            inactive: "StatusLineNC",
+        },
+    }, "keep")
+    const hlgroups = conf.highlight->mapnew((_, v) => type(v) == v:t_string ? v : v.name)
+    def CalcTabList(win: number): string
+        var res = color.Highlight(hlgroups.inactive)
+        const curtab = tabpagenr()
+        const alltab = range(1, tabpagenr("$"))
+        if curtab > 1
+            res ..= alltab[0 : curtab - 2]->mapnew((_, v) => conf.onetab(v))->join(conf.sep)
+            res ..= conf.sep_active
+        endif
+        res ..= color.Highlight(hlgroups.active)
+        res ..= conf.onetab(curtab)
+        res ..= color.Highlight(hlgroups.inactive)
+        if curtab < alltab[-1]
+            res ..= conf.sep_active
+            res ..= alltab[curtab : -1]->mapnew((_, v) => conf.onetab(v))->join(conf.sep)
+        endif
+        return res
+    enddef
+    var enter_tab = false
+    return color.HlSchemeComponent(conf.highlight->values()->filter((_, v) => type(v) == v:t_dict), {
+        value: CalcTabList,
+        autocmds: ["TabEnter", "BufEnter"],
+        listeners: {
+            "autocmd:TabEnter": {
+                1: [(..._) => {
+                    enter_tab = true
+                }],
+            },
+            "autocmd:BufEnter": {
+                1: [(..._) => {
+                    if enter_tab
+                        enter_tab = false
+                        lines9.Update({ type: "tabline" })
+                        lines9.Refresh({ scope: "tabline" })
+                    endif
+                }],
+            },
+        },
+    })
 enddef
 

@@ -159,6 +159,7 @@ def Regenerate(loc: any)
 enddef
 # }}} End Refresh
 
+# {{{ Update
 export def Update(loc: any, scheme: any = null)
     if loc.type == "tabline"
         if scheme == null
@@ -177,6 +178,7 @@ export def Update(loc: any, scheme: any = null)
     endif
     Regenerate(loc)
 enddef
+# }}} End update
 
 # {{{ CalcScheme and CalcComponent
 export def CalcComponent(component: any, win: number): string

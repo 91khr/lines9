@@ -41,15 +41,11 @@ export def ModeIndicator(config: any = {}): any
         },
     }, "keep")
     const hlgroups = conf.highlight->mapnew((_, v) => type(v) == v:t_string ? v : v.name)
-    function CalcMode(conf, hlgroups)
-        function! s:CalcModeImpl(win) closure
-            let [cat, text] = a:conf.modemap[mode()[0]]
-            return s:color.Highlight(a:hlgroups[cat]) .. printf(a:conf.format, text)
-        endfunction
-        return function("s:CalcModeImpl")
-    endfunction
     return color.HlSchemeComponent(conf.highlight->values()->filter((_, v) => type(v) == v:t_dict), {
-        value: utils.Dyn(CalcMode(conf, hlgroups), true),
+        value: utils.Dyn(utils.ToLegacyClosure((win) => {
+            const [cat, text] = conf.modemap->get(mode()[0], ["", "(UNKNOWN)"])
+            return color.Highlight(hlgroups->get(cat, "ErrorMsg")) .. printf(conf.format, text)
+        }), true),
     })
 enddef
 
@@ -100,27 +96,21 @@ export def FileName(config: any = {}): any
     }
 enddef
 
+const FnameFuncShort = FileNameFunc({ full: false })
+def TabpageDefaultFname(tabnr: number, win: number): string
+    var buf = winbufnr(win)
+    var mo_ro = ""
+    if getbufinfo(buf)[0].changed
+        mo_ro = " +"
+    elseif getbufvar(buf, "&ro")
+        mo_ro = " -"
+    endif
+    return string(tabnr) .. " " .. FnameFuncShort(win) .. mo_ro .. " "
+enddef
 export def TabpageList(config: any = {}): any
-    function FnameFunc(Fname)
-        function! s:TabpageFuncImpl(tabnr, win) closure
-            let buf = winbufnr(a:win)
-            let mo_ro = ""
-            if getbufinfo(buf)[0].changed
-                let mo_ro = " +"
-            elseif getbufvar(buf, "&ro")
-                let mo_ro = " -"
-            endif
-            return string(a:tabnr) .. " " .. a:Fname(a:win) .. mo_ro .. " "
-        endfunction
-        return function("s:TabpageFuncImpl")
-    endfunction
-    const DefaultFname = FnameFunc(FileNameFunc({ full: false }))
     const conf = config->extend({
-        tab_inactive: (tabnr) => {
-            const win = win_getid(tabpagewinnr(tabnr), tabnr)
-            return " " .. DefaultFname(tabnr, win)
-        },
-        tab_active: (tabnr) => " %{" .. string(DefaultFname) .. "(" .. tabnr .. ", win_getid())}",
+        tab_inactive: (tabnr) => " " .. TabpageDefaultFname(tabnr, win_getid(tabpagewinnr(tabnr), tabnr)),
+        tab_active: (tabnr) => " %{" .. string(TabpageDefaultFname) .. "(" .. tabnr .. ", win_getid())}",
         sep_inactive: "|",
         sep_active: "",
         highlight: {

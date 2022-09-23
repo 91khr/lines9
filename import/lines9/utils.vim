@@ -16,6 +16,10 @@ export def Dyn(Fn: func, rec: bool = false): func(number): string
     return (win) => "%{" .. (rec ? "%" : "") .. string(Fn) .. "(" .. win .. ")" .. (rec ? "%" : "") .. "}"
 enddef
 
+export function ToLegacyClosure(Fn)
+    return { ... -> call(a:Fn, a:000) }
+endfunction
+
 export def Merge(src: any, dst: any): any
     src.autocmds = src->get("autocmds", [])->extend(dst->get("autocmds", []))
     if !src->has_key("listeners")

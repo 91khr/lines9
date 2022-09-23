@@ -16,6 +16,15 @@ the number passed to the wrapper when refreshing the line.
 `rec` specifies whether the result of the result of the function should be
 expanded recursively, i.e. use `%{%...%}` instead of `%{...}`
 
+**Note** that the if `fn` is a closure, it must be a legacy closure.
+See notes [README.md](README.md) for workarounds and details.
+
+## `ToLegacyClosure(fn: func): func`
+
+Turn a closure into legacy closure, used for the workaround.
+
+See notes [README.md](README.md) for workarounds and details.
+
 ## `MakeComponent(val: string | func(number): string): Component`
 
 Turn the string or function into a component.

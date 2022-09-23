@@ -134,15 +134,17 @@ export def TabpageList(config: any = {}): any
         const curtab = tabpagenr()
         const alltab = range(1, tabpagenr("$"))
         if curtab > 1
-            res ..= alltab[0 : curtab - 2]->mapnew((_, v) => conf.tab_inactive(v))->join(conf.sep_inactive)
+            res ..= alltab[0 : curtab - 2]->mapnew((_, v) => "%" .. v .. "T" .. conf.tab_inactive(v))
+                        \ ->join(conf.sep_inactive)
             res ..= conf.sep_active
         endif
         res ..= color.Highlight(hlgroups.active)
-        res ..= conf.tab_active(curtab)
+        res ..= "%" .. curtab .. "T" .. conf.tab_active(curtab)
         res ..= color.Highlight(hlgroups.inactive)
         if curtab < alltab[-1]
             res ..= conf.sep_active
-            res ..= alltab[curtab : -1]->mapnew((_, v) => conf.tab_inactive(v))->join(conf.sep_inactive)
+            res ..= alltab[curtab : -1]->mapnew((_, v) => "%" .. v .. "T" .. conf.tab_inactive(v))
+                        \ ->join(conf.sep_inactive)
         endif
         return res
     enddef

@@ -18,12 +18,14 @@ fname.value = (win) => (getbufvar(winbufnr(win), "&ro") ? " RO |" : "") .. Fname
 
 g:lines9_config = {
     schemes: {
-        active: ["mode", "fname", "modified", "sep", "fileinfo", "percentage", "index"],
+        active: ["mode", "paste", "spell", "fname", "modified", "sep", "fileinfo", "percentage", "index"],
         inactive: ["fname_inactive", "modified", "sep", "index_inactive"],
         tabline: ["tablist", "sep", "closecur"],
     },
     components: {
         mode: components.ModeIndicator(),
+        paste: utils.MakeComponent("%{&paste ? '| paste ' : ''}"),
+        spell: utils.MakeComponent("%{&spell ? '| ' .. &spelllang .. ' ' : ''}"),
         fname: color.HlComponent(fname, "StatusLineNC"),
         modified: utils.MakeComponent("%{&modified ? '| + ' : ''}"),
         fname_inactive: color.HlComponent(components.FileName(), "CursorLine"),

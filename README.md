@@ -56,6 +56,8 @@ where `example` is the name of the example.
 The core library of Lines9 only provides most foundamental features, for more utilities that make life easier,
 import submodules `lines9/xxx.vim`, where `xxx` is the module name. Their documents are in `doc/xxx.md`.
 
+There are also some tips and notes in `doc/README.md`; check it out if you find something behaves wierd.
+
 ## Configuration
 
 The type of the configuration can be expressed as:

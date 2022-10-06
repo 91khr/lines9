@@ -1,7 +1,7 @@
 vim9script
 # Other small utils
 
-export def MakeComponent(val: any): any
+export def MakeComponent(val: any): dict<any>
     if type(val) == v:t_string
         return { value: (win) => val }
     elseif type(val) == v:t_func
@@ -20,7 +20,7 @@ export function ToLegacyClosure(Fn)
     return { ... -> call(a:Fn, a:000) }
 endfunction
 
-export def Merge(src: any, dst: any): any
+export def Merge(src: dict<any>, dst: dict<any>): dict<any>
     src.autocmds = src->get("autocmds", [])->extend(dst->get("autocmds", []))
     if !src->has_key("listeners")
         src.listeners = {}
@@ -40,13 +40,13 @@ export def Merge(src: any, dst: any): any
     return src
 enddef
 
-export def Pipe(component: any, Fn: func(string): string): any
+export def Pipe(component: dict<any>, Fn: func(string): string): dict<any>
     const Old = component.value
     component.value = (win) => Fn(Old(win))
     return component
 enddef
 
-export def WithSep(sep: string, ...components: list<any>): any
+export def WithSep(sep: string, ...components: list<dict<any>>): dict<any>
     const fnlist = components->mapnew((_, comp) => comp.value)
     final res = { value: (win) => fnlist->mapnew((_, F) => F(win))->join(sep) }
     for comp in components

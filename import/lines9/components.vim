@@ -9,7 +9,7 @@ export const Trunc = utils.MakeComponent("%<")
 export const Sep = utils.MakeComponent("%=")
 export const CloseCurTab = utils.MakeComponent("%999X X ")
 
-export def ModeIndicator(config: any = {}): any
+export def ModeIndicator(config: dict<any> = {}): dict<any>
     const conf = config->extend({
         highlight: {
             normal: { base: "Identifier", name: "Lines9ModeIndicatorNormal",
@@ -49,7 +49,7 @@ export def ModeIndicator(config: any = {}): any
     })
 enddef
 
-export def FileNameFunc(config: any = {}): func(number): string
+export def FileNameFunc(config: dict<any> = {}): func(number): string
     const conf = config->extend({
         full: true,
     }, "keep")
@@ -68,17 +68,18 @@ export def FileNameFunc(config: any = {}): func(number): string
                         \ }
             return btlist->has_key(bt) ? btlist[bt] : '[No Name]'
         endif
+        echom buf
         if getbufvar(buf, '&ft') == 'help' && getbufvar(buf, '&ro') && !getbufvar(buf, '&modifiable')
             return fnamemodify(fname, ":t")
         endif
         const relpath = fnamemodify(fname, ":.")
-        return conf.full ? relpath :
-                    \ substitute(relpath, '\v([^/])([^/]*)' .. '/', '\1' .. '/', 'g')
+        echom conf
+        return conf.full ? relpath : substitute(relpath, '\v([^/])([^/]*)' .. '/', '\1' .. '/', 'g')
     enddef
     return CalcFileName
 enddef
 
-export def FileName(config: any = {}): any
+export def FileName(config: dict<any> = {}): dict<any>
     const conf = config->extend({
         full: true,
         format: " %s ",
@@ -107,7 +108,7 @@ def TabpageDefaultFname(tabnr: number, win: number): string
     endif
     return string(tabnr) .. " " .. FnameFuncShort(win) .. mo_ro .. " "
 enddef
-export def TabpageList(config: any = {}): any
+export def TabpageList(config: dict<any> = {}): dict<any>
     const conf = config->extend({
         tab_inactive: (tabnr) => " " .. TabpageDefaultFname(tabnr, win_getid(tabpagewinnr(tabnr), tabnr)),
         tab_active: (tabnr) => " %{" .. string(TabpageDefaultFname) .. "(" .. tabnr .. ", win_getid())}",
@@ -118,7 +119,7 @@ export def TabpageList(config: any = {}): any
             inactive: "StatusLineNC",
         },
     }, "keep")
-    const hlgroups = conf.highlight->mapnew((_, v) => type(v) == v:t_string ? v : v.name)
+    const hlgroups: dict<any> = conf.highlight->mapnew((_, v) => type(v) == v:t_string ? v : v.name)
     def CalcTabList(win: number): string
         var res = color.Highlight(hlgroups.inactive)
         const curtab = tabpagenr()

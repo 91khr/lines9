@@ -7,7 +7,7 @@ export def Highlight(group: string): string
     return "%#" .. group .. "#"
 enddef
 
-export def HlComponent(component: any, group: string): any
+export def HlComponent(component: dict<any>, group: string): dict<any>
     const hl = Highlight(group)
     return {
         value: (win) => hl .. call(component.value, [win]),
@@ -16,7 +16,7 @@ export def HlComponent(component: any, group: string): any
     }
 enddef
 
-export def HlSchemeComponent(scheme: list<any>, src: any = {}): any
+export def HlSchemeComponent(scheme: list<any>, src: dict<any> = {}): dict<any>
     def AddGroups()
         for it in scheme
             var val = copy(it)

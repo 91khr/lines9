@@ -31,14 +31,14 @@ export def EmitEvent(name: string, ...args: list<any>)
     endfor
 enddef
 
-export def GetPreset(name: string): any
+export def GetPreset(name: string): dict<any>
     exec "source " .. expand("<script>:h") .. "/../examples/" .. name .. ".vim"
     return g:lines9_config
 enddef
 # }}} End assets
 
 # {{{ Init
-export def Init(config: any)
+export def Init(config: dict<any>)
     conf = config->extend({
         components: {},
         schemes: {},
@@ -134,7 +134,7 @@ enddef
 # }}} End Disable
 
 # {{{ Refresh
-export def Refresh(loc: any)
+export def Refresh(loc: dict<any>)
     const scope = loc.scope
     if scope == "tabline"
         Regenerate({ type: "tabline" })
@@ -150,7 +150,7 @@ export def Refresh(loc: any)
 enddef
 
 # Regenerate the statusline of the window
-def Regenerate(loc: any)
+def Regenerate(loc: dict<any>)
     # Get the scheme
     const schname = conf.dispatch(loc)
     if !schname
@@ -169,7 +169,7 @@ enddef
 # }}} End Refresh
 
 # {{{ Update
-export def Update(loc: any, scheme: any = null)
+export def Update(loc: dict<any>, scheme: any = null)
     if loc.type == "tabline"
         if scheme == null
             tabline_scheme_cache = {}

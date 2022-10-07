@@ -68,12 +68,10 @@ export def FileNameFunc(config: dict<any> = {}): func(number): string
                         \ }
             return btlist->has_key(bt) ? btlist[bt] : '[No Name]'
         endif
-        echom buf
         if getbufvar(buf, '&ft') == 'help' && getbufvar(buf, '&ro') && !getbufvar(buf, '&modifiable')
             return fnamemodify(fname, ":t")
         endif
         const relpath = fnamemodify(fname, ":.")
-        echom conf
         return conf.full ? relpath : substitute(relpath, '\v([^/])([^/]*)' .. '/', '\1' .. '/', 'g')
     enddef
     return CalcFileName

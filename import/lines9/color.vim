@@ -21,7 +21,7 @@ export def HlSchemeComponent(scheme: list<any>, src: dict<any> = {}): dict<any>
         for it in scheme
             var val = copy(it)
             if val->has_key("base")
-                val->extend(hlget(val.base, true)[0], "keep")
+                val->extend(hlget(val.base, true)->get(0, {}), "keep")
             endif
             try
                 hlset([val])

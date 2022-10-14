@@ -77,7 +77,9 @@ export def Enable()
         au!
         for [name, patterns] in autocmds->items()
             exec "au " .. name .. " " .. patterns->keys()->join(",") ..
-                        \ " EmitEvent('autocmd:" .. name .. "', '" .. name .. "', expand('<amatch>'))"
+                        \ " EmitEvent('autocmd:" .. name .. "', '" .. name .. "', expand('<amatch>')) | " ..
+                        \ " EmitEvent('autocmd:" .. name .. ":' .. expand('<amatch>'), '" ..
+                        \   name .. "', expand('<amatch>'))"
         endfor
         au BufEnter,WinEnter * Refresh({ scope: "window" })
         au TabEnter * Refresh({ scope: "tabpage" })

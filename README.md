@@ -103,8 +103,16 @@ Some events are defined by default:
 - `lines9:AfterDisable`: triggered after disabling, no arguments.
 - `lines9:GetTabline`: triggered every time before Vim retrieves the tabline.
 
-Events originating from listening to autocmds are named `autocmd:AutocmdEventName`,
-where `AutocmdEventName` is the event name in the specification.
+Events originating from listening to autocmds are named `autocmd:AutocmdEventName` or
+`autocmd:AutocmdEventName:Pattern`,
+in which `AutocmdEventName` is the event name in the specification, and `Pattern` is the matched pattern.
+If the pattern part is not present, every pattern of the event would invoke the listener;
+and when the pattern is present, only the specified pattern would invoke the listener.
+Note that the matched pattern is directly used as the event name,
+which means patterns like `Cargo.toml` can be used in event name, while `*.toml` cannot;
+if the more complex pattern is needed, omit the pattern and match it in the listener instead.
+Furthermore, events are not automatically listened to, i.e. they must be listed both in `autocmds` and in `listeners`.
+
 The autocmd event name and the matched pattern would be passed to the listener.
 
 Events may be directly invoked with their name and arbitrary arguments.
